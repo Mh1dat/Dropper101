@@ -28,7 +28,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//INJECTION PROCESS...
 	int pid = 0;
-    HANDLE hProc = NULL;
+    	HANDLE hProc = NULL;
 	//Find your target process
 	pid = FindTarget("explorer.exe");
 
